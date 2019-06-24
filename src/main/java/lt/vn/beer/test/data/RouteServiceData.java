@@ -1,10 +1,10 @@
 package lt.vn.beer.test.data;
 
-public class SearchData {
+public class RouteServiceData {
     private double distance;
-    private GeoCodes point;
+    private GeoCodesData point;
 
-    public SearchData(double distance, GeoCodes point) {
+    public RouteServiceData(double distance, GeoCodesData point) {
         this.distance = distance;
         this.point = point;
     }
@@ -17,17 +17,17 @@ public class SearchData {
         this.distance = distance;
     }
 
-    public GeoCodes getPoint() {
+    public GeoCodesData getPoint() {
         return point;
     }
 
-    public void setPoint(GeoCodes point) {
+    public void setPoint(GeoCodesData point) {
         this.point = point;
     }
 
     @Override
     public String toString() {
-        return "SearchData{" +
+        return "RouteServiceData{" +
                 "distance=" + distance +
                 ", point=" + point +
                 '}';

@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface DataProvider {
-    List<GeoCodes> getBreweryLocations();
-    Map<Long, BeerCategory> getBeerCategories();
-    Map<Long, BeerStyles> getBeerStyles();
-    Map<Long, Beer> getBeers();
-    Map<Long, Brewery> getBreweries();
+    List<GeoCodesData> getBreweryLocations();
+    Map<Long, BeerCategoryData> getBeerCategories();
+    Map<Long, BeerStyleData> getBeerStyles();
+    Map<Long, BeerData> getBeers();
+    Map<Long, BreweryData> getBreweries();
 }

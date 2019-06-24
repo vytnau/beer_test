@@ -1,12 +1,12 @@
 package lt.vn.beer.test.data;
 
-public class GeoCodes {
+public class GeoCodesData {
     private long id;
     private long breweryId;
     private double latitude;
     private double longitude;
 
-    public GeoCodes(long id, long breweryId, double latitude, double longitude) {
+    public GeoCodesData(long id, long breweryId, double latitude, double longitude) {
         this.id = id;
         this.breweryId = breweryId;
         this.latitude = latitude;
@@ -25,29 +25,17 @@ public class GeoCodes {
         return breweryId;
     }
 
-    public void setBreweryId(long breweryId) {
-        this.breweryId = breweryId;
-    }
-
     public double getLatitude() {
         return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
     }
 
     public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
     @Override
     public String toString() {
-        return "GeoCodes{" +
+        return "GeoCodesData{" +
                 "id=" + id +
                 ", breweryId=" + breweryId +
                 ", latitude=" + latitude +
