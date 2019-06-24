@@ -19,7 +19,7 @@ public class BeerTestMain {
     //TODO need to do optimization
     //TODO Write some tests
     //TODO user recursion for search
-    
+
     public static void main(String[] args){
         long startTime = System.currentTimeMillis();
         DataProvider dataProvider = new FileDataSource();
