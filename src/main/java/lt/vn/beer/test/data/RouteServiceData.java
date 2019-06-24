@@ -3,10 +3,12 @@ package lt.vn.beer.test.data;
 public class RouteServiceData {
     private double distance;
     private GeoCodesData point;
+    private BeerData beerData;
 
-    public RouteServiceData(double distance, GeoCodesData point) {
+    public RouteServiceData(double distance, GeoCodesData point, BeerData beerData) {
         this.distance = distance;
         this.point = point;
+        this.beerData = beerData;
     }
 
     public double getDistance() {
@@ -23,6 +25,10 @@ public class RouteServiceData {
 
     public void setPoint(GeoCodesData point) {
         this.point = point;
+    }
+
+    public BeerData getBeerData() {
+        return beerData;
     }
 
     @Override

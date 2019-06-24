@@ -17,15 +17,16 @@ public class RouteService {
         this.beersMap = beersMap;
     }
 
-    private List<GeoCodesData> filterGeoCodesPoints(List<GeoCodesData> geoCodes){
-        List<GeoCodesData> filteredGeoCodes = new ArrayList<>();
+    private List<RouteServiceData> filterGeoCodesPoints(List<GeoCodesData> geoCodes){
+        List<RouteServiceData> filteredGeoCodes = new ArrayList<>();
         for( GeoCodesData geoCode : geoCodes){
             //Check if missing some data about some breweries
-            if(beersMap.get(geoCode.getBreweryId())!= null){
+            BeerData beerData = beersMap.get(geoCode.getBreweryId());
+            if(beerData != null){
                 //ignore to far points
                 double dist = Haversine.distance(home.getLatitude(), home.getLongitude(), geoCode.getLatitude(), geoCode.getLongitude());
                 if (dist * 2 < MAX_DISTANCE) {
-                    filteredGeoCodes.add(geoCode);
+                    filteredGeoCodes.add(new RouteServiceData(dist, geoCode, beerData));
                 }
             }
         }
@@ -33,26 +34,25 @@ public class RouteService {
     }
 
     public RouteResultData findTheRoute(List<GeoCodesData> geoCodes){
-        List<GeoCodesData> filteredPoints = filterGeoCodesPoints(geoCodes);
+        List<RouteServiceData> filteredPoints = filterGeoCodesPoints(geoCodes);
         //construct the route
         Set<BeerStyleData> beerStyleResults = new HashSet<>();
         List<RouteServiceData> route = new ArrayList<>();
         GeoCodesData point = home;
-        route.add(new RouteServiceData(0,home));
+        route.add(new RouteServiceData(0,home, null));
         while(distance < MAX_DISTANCE){
-            //Reik visad perksaiciuoti MaxDistance ir tureti nauja reiksme
-            RouteServiceData minPont = searchNearestPoint(point, filteredPoints, beerStyleResults);
-            double dist = Haversine.distance(minPont.getPoint().getLatitude(), minPont.getPoint().getLongitude(), home.getLatitude(), home.getLongitude());
-            if(distance + dist + minPont.getDistance() < MAX_DISTANCE){
-                route.add(minPont);
-                BeerData beer = beersMap.get(minPont.getPoint().getBreweryId());
+            RouteServiceData maxPoint = searchBeerFactoryWithMostBeerStyles(point, filteredPoints, beerStyleResults);
+            double dist = Haversine.distance(maxPoint.getPoint().getLatitude(), maxPoint.getPoint().getLongitude(), home.getLatitude(), home.getLongitude());
+            if(distance + dist + maxPoint.getDistance() < MAX_DISTANCE){
+                route.add(maxPoint);
+                BeerData beer = maxPoint.getBeerData();
                 beerStyleResults.addAll(beer.getBeerStyles());
-                filteredPoints.remove(minPont.getPoint());
-                point = minPont.getPoint();
-                distance += minPont.getDistance();
+                filteredPoints.remove(maxPoint.getPoint());
+                point = maxPoint.getPoint();
+                distance += maxPoint.getDistance();
             } else {
                 distance += dist;
-                route.add(new RouteServiceData(dist, home));
+                route.add(new RouteServiceData(dist, home, null));
                 break;
             }
         }
@@ -60,24 +60,29 @@ public class RouteService {
         return new RouteResultData(route, beerStyleResults);
     }
 
-    private RouteServiceData searchNearestPoint(GeoCodesData point, List<GeoCodesData> geoCodes, Set<BeerStyleData> beerStyleResults){
+    private RouteServiceData searchBeerFactoryWithMostBeerStyles(GeoCodesData point, List<RouteServiceData> geoCodes, Set<BeerStyleData> beerStyleResults){
         double min = MAX_DISTANCE / 2;
         int beerStyles = 0;
-        GeoCodesData minPoint = null;
-        for(GeoCodesData g : geoCodes) {
-            //TODO need to change criteria
-            double dist = Haversine.distance(point.getLatitude(), point.getLongitude(), g.getLatitude(), g.getLongitude());
-            BeerData beer = beersMap.get(g.getBreweryId());
+        RouteServiceData minPoint = null;
+
+        for(RouteServiceData geoCode : geoCodes) {
+            double dist = 0;
+            if(point.equals(home)) {
+                dist = Haversine.distance(point.getLatitude(), point.getLongitude(), geoCode.getPoint().getLatitude(), geoCode.getPoint().getLongitude());
+            } else {
+                dist = geoCode.getDistance();
+            }
+            BeerData beer = beersMap.get(geoCode.getPoint().getBreweryId());
             int newBeerStyles = newBeerStyles(beer.getBeerStyles(), beerStyleResults);
 
             if(beerStyles < newBeerStyles){
 //            if (dist < min) {
                 min = dist;
                 beerStyles = newBeerStyles;
-                minPoint = g;
+                minPoint = geoCode;
             }
         };
-        return new RouteServiceData(min, minPoint);
+        return new RouteServiceData(min, minPoint.getPoint(), minPoint.getBeerData());
     }
 
     private int newBeerStyles(Set<BeerStyleData> beerStyles, Set<BeerStyleData> beerStyleResults){
