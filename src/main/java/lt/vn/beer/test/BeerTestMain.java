@@ -16,27 +16,33 @@ public class BeerTestMain {
     private static double lat = 51.74250300;
     private static Map<Long, BreweryData> breweryValueMap;
 
-    //TODO need to do optimization
-    //TODO Write some tests
-    //TODO user recursion for search
-
     public static void main(String[] args){
-        long startTime = System.currentTimeMillis();
-        DataProvider dataProvider = new FileDataSource();
-        List<GeoCodesData> geoCodes = dataProvider.getBreweryLocations();
+        if(args.length == 2) {
+            try {
+                lat = Double.parseDouble(args[0]);
+                lon = Double.parseDouble(args[1]);
+            } catch (NumberFormatException ex){
+                System.err.println("Wrong coordination format: " + args[0] + " " + args[1]);
+                return;
+            }
+
+            long startTime = System.currentTimeMillis();
+            DataProvider dataProvider = new FileDataSource();
+            List<GeoCodesData> geoCodes = dataProvider.getBreweryLocations();
 //        Not need these maps
 //        Map<Long, BeerStyleData> beerStylesMap = dataProvider.getBeerStyles();
 //        Map<Long, BeerCategoryData> beerCategoryMap = dataProvider.getBeerCategories();
-        Map<Long, BeerData> beer = dataProvider.getBeers();
-        breweryValueMap = dataProvider.getBreweries();
+            Map<Long, BeerData> beer = dataProvider.getBeers();
+            breweryValueMap = dataProvider.getBreweries();
 
-        RouteService routeService = new RouteService(new GeoCodesData(0, 0, lat, lon), beer);
-        RouteResultData result = routeService.findTheRoute(geoCodes);
-        printBeerFactories(result.getRoute());
-        printBeerStyles(result.getBeerStyles());
-        long endTime = System.currentTimeMillis();
+            RouteService routeService = new RouteService(new GeoCodesData(0, 0, lat, lon), beer);
+            RouteResultData result = routeService.findTheRoute(geoCodes);
+            printBeerFactories(result.getRoute());
+            printBeerStyles(result.getBeerStyles());
+            long endTime = System.currentTimeMillis();
 
-        System.out.println("Program took: " + (endTime - startTime) / 100d + " s");
+            System.out.println("Program took: " + (endTime - startTime) / 100d + " s");
+        }
     }
 
     private static void printBeerFactories(List<RouteServiceData> routes){
