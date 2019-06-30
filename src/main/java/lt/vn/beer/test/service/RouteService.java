@@ -72,7 +72,6 @@ public class RouteService {
         List<RouteServiceData> route = new ArrayList<>();
         GeoCodesData point = home;
         route.add(new RouteServiceData(0,home, null));
-        System.out.println(filteredPoints.size());
         int index = 0;
         while(distance < MAX_DISTANCE){
             RouteServiceData maxPoint = searchBeerFactoryWithMostBeerStyles(point, filteredPoints, beerStyleResults);
@@ -94,7 +93,6 @@ public class RouteService {
                 break;
             }
         }
-        System.out.println(route.size());
         return new RouteResultData(route, beerStyleResults);
     }
 
