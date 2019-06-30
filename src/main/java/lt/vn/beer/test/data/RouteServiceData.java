@@ -1,6 +1,6 @@
 package lt.vn.beer.test.data;
 
-public class RouteServiceData {
+public class RouteServiceData implements Comparable {
     private double distance;
     private GeoCodesData point;
     private BeerData beerData;
@@ -37,5 +37,16 @@ public class RouteServiceData {
                 "distance=" + distance +
                 ", point=" + point +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        RouteServiceData routeResult = (RouteServiceData) o;
+        if(routeResult.distance > this.distance){
+            return -1;
+        } else if(routeResult.distance > this.distance){
+            return 1;
+        }
+        return 0;
     }
 }
